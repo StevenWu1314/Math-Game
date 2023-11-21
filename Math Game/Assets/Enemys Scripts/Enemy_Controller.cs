@@ -25,5 +25,9 @@ public class Enemy_Controller : MonoBehaviour
         }
     }
 
+    void ApplyDamage(float damage)
+    {
+        enemyHealth -= damage;
+    }
 
 }

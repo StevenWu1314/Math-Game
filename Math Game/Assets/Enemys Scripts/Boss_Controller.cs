@@ -28,6 +28,11 @@ public class Boss_Controller : MonoBehaviour
 
     }
 
+    void ApplyDamage(float damage)
+    {
+        bossHealth -= damage;
+    }
+
    void Attack1()
     {
         int rand = Random.Range(0, enemyPrefabs.Length);
