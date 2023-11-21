@@ -8,6 +8,12 @@ public class NewBehaviourScript : MonoBehaviour
 	
 	public float min_Y, max_Y;
 	
+	[SerializeField]
+	private GameObject player_Bullet;
+	
+	[SerializeField]
+	private Transform attack_Point;
+	
     // Start is called before the first frame update
     void Start()
     {
@@ -18,6 +24,7 @@ public class NewBehaviourScript : MonoBehaviour
     void Update()
     {
         MovePlayer();
+		Attack();
     }
 	
 	void MovePlayer()
@@ -41,6 +48,13 @@ public class NewBehaviourScript : MonoBehaviour
 				temp.y = min_Y;
 			
 			transform.position = temp;
+		}
+	}
+	
+	void Attack() {
+		if(Input.GetKeyDown(KeyCode.K))
+		{
+			Instantiate(player_Bullet, attack_Point.position, Quaternion.identity);
 		}
 	}
 			
