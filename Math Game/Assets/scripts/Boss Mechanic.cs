@@ -11,12 +11,13 @@ public class BossMechanic : MonoBehaviour
     public TMPro.TMP_Text healthDisplay;
     public TMPro.TMP_Text ProblemDisplay;
     public GameObject boss;
-    public TMPro.TMP_InputField answerField;
+    public TMPro.TMP_InputField givenAnswer;
     public float num1;
     public float num2;
     public float sign;
 
     public float answer;
+   
     // Start is called before the first frame update
     void Start()
     {
@@ -24,7 +25,6 @@ public class BossMechanic : MonoBehaviour
     }
 
     // Update is called once per frame
-
     void createProblem() {
         num1 = (int)Random.Range(1, 10);
         num2 = (int)Random.Range(1, 10);
@@ -48,12 +48,13 @@ public class BossMechanic : MonoBehaviour
                 answer = num1/num2;
                 break;
         }
-        answerField.Select();
+        givenAnswer.text = "";
+        givenAnswer.ActivateInputField();
 
     }
 
-    public void checkAnswer(string givenAnswer){
-        if (float.Parse(givenAnswer) == answer) 
+    public void checkAnswer(){
+        if (float.Parse(givenAnswer.text) == answer) 
         {
             health -= 1;
             healthDisplay.text = $"{health}/{maxHealth}";
@@ -64,7 +65,7 @@ public class BossMechanic : MonoBehaviour
             }
             Debug.Log("correct");
         }
-        if (float.Parse(givenAnswer) != answer) 
+        else if (float.Parse(givenAnswer.text) != answer) 
         {
             boss.GetComponent<Boss>().attack();
             Debug.Log($"{givenAnswer} != {answer}");
