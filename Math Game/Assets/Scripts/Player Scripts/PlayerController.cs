@@ -13,11 +13,15 @@ public class NewBehaviourScript : MonoBehaviour
 	
 	[SerializeField]
 	private Transform attack_Point;
+
+	public float attack_Timer = 0.35f;
+	private float current_Attack_Timer;
+	private bool canAttack;
 	
     // Start is called before the first frame update
     void Start()
     {
-        
+        current_Attack_Timer = attack_Timer;
     }
 
     // Update is called once per frame
@@ -52,9 +56,19 @@ public class NewBehaviourScript : MonoBehaviour
 	}
 	
 	void Attack() {
+		attack_Timer += Time.deltaTime;
+		if(attack_Timer > current_Attack_Timer)
+		{
+			canAttack = true;
+		}
 		if(Input.GetKeyDown(KeyCode.K))
 		{
-			Instantiate(player_Bullet, attack_Point.position, Quaternion.identity);
+			if(canAttack)
+			{
+				canAttack = false;
+				attack_Timer = 0f;
+				Instantiate(player_Bullet, attack_Point.position, Quaternion.identity);
+			}
 		}
 	}
 			
