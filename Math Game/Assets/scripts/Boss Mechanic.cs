@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using JetBrains.Annotations;
@@ -21,10 +22,12 @@ public class BossMechanic : MonoBehaviour
     public float answer;
     public GameObject bossProj;
     public bool answerRecieved = false;
-
     public GameObject[] answerNums;
-
     public Animator animator;
+
+    public bool invulnerbility;
+
+    public static event Action exposeWeakness; 
    
     // Start is called before the first frame update
     void Start()
@@ -34,6 +37,7 @@ public class BossMechanic : MonoBehaviour
         for(int i = 0; i < answerNums.Length; i++) {
             answerNums[i].SetActive(true);
         }
+        PlayerController.inPosition += weaknessExposed;
     }
 
     // Update is called once per frame
@@ -70,16 +74,12 @@ public class BossMechanic : MonoBehaviour
         else if (float.Parse(givenAnswer.text) == answer) 
         {
             health -= 1;
-            healthDisplay.text = $"{health}/{maxHealth}";
-            answerRecieved = true;
-            createProblem();
-            if(health == 0){
-                animator.SetTrigger("death");
-                Destroy(gameObject, 28f/60f );
-            }
-            Debug.Log("correct");
             
             givenAnswer.text = "";
+            exposeWeakness?.Invoke();
+            Debug.Log("correct");
+            
+            
         }
         else if (float.Parse(givenAnswer.text) != answer) 
         {
@@ -110,12 +110,49 @@ public class BossMechanic : MonoBehaviour
         }
         yield return null;
     }
+    void weaknessExposed() {
+        StartCoroutine(WeaknessExposed());
+    }
+    IEnumerator WeaknessExposed() {
+        yield return new WaitForSeconds(1.8f);
+        for(int i = 0; i < answerNums.Length; i++) {
+            answerNums[i].SetActive(false);
+        }
+        yield return new WaitForSeconds(5f);
+        for(int i = 0; i < answerNums.Length; i++) {
+            answerNums[i].SetActive(true);
+        }
+        createProblem();
+        yield return null;
+    }
+
 
     private void OnDestroy(){
         for(int i = 0; i < answerNums.Length; i++) {
             answerNums[i].SetActive(false);
         }
         
+
+        
+    }
+
+    public void OnTriggerEnter2D(Collider2D other) {
+        if (other.CompareTag("PlayerProj") && !invulnerbility) {
+            health -= 1;
+            healthDisplay.text = $"{health}/{maxHealth}";
+            if (health == 0) {
+                animator.SetTrigger("death");
+                Destroy(gameObject, 28f/60f);
+            }
+            StartCoroutine(Invulnerbility());
+        }
+    }
+
+    IEnumerator Invulnerbility(){
+        invulnerbility = true;
+        yield return new WaitForSeconds(3f);
+        invulnerbility = false;
+        yield return null;
     }
 
 }
