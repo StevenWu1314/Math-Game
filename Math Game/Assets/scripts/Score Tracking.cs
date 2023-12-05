@@ -8,6 +8,7 @@ public class ScoreTracking : MonoBehaviour
     //public TMPro.TMP_Text highscoreText;
     public TMPro.TMP_Text scoreText;
     [SerializeField] private int score = 0;
+    public TMPro.TMP_Text highscoreText;
     public int highScore = 0;
     // Start is called before the first frame update
     
@@ -22,10 +23,10 @@ public class ScoreTracking : MonoBehaviour
     {
         if (score > highScore)
         {
-            highScore = score;
+            PlayerPrefs.SetInt("HighScore", score);
            // highscoreText.text = "HighScore\n" + highScore.ToString();
         }
-        scoreText.text = "score: " + score.ToString();
+        scoreText.text = "score:" + score.ToString();
         
         
     }
@@ -33,5 +34,10 @@ public class ScoreTracking : MonoBehaviour
     public void IncreaseScore(int value)
     {
         score += value;
+    }
+
+    public void getHighScore(){
+        highscoreText.text = "HighScore\n" + PlayerPrefs.GetInt("HighScore").ToString();
+        
     }
 }

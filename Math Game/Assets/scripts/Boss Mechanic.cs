@@ -1,21 +1,21 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using JetBrains.Annotations;
+using Microsoft.Unity.VisualStudio.Editor;
 using Unity.Mathematics;
 using Unity.VisualScripting;
+using UnityEditor.SearchService;
 using UnityEngine;
-
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 public class BossMechanic : MonoBehaviour
 {
-    public GameObject healthBar;
-    public int health = 10;
-    public int maxHealth = 10;
-    public TMPro.TMP_Text healthDisplay;
-    public TMPro.TMP_Text ProblemDisplay;
-    public GameObject boss;
-    public TMPro.TMP_Text givenAnswer;
     
+    public float health = 10;
+    public float maxHealth = 10;
+    public TMPro.TMP_Text ProblemDisplay;
+    
+    public TMPro.TMP_Text givenAnswer;
+    public UnityEngine.UI.Image healthsquare;
     public float num1;
     public float num2;
     public float sign;
@@ -24,10 +24,13 @@ public class BossMechanic : MonoBehaviour
     public bool answerRecieved = false;
     public GameObject[] answerNums;
     public Animator animator;
-
+    public bool Tutorial = false;
     public bool invulnerbility;
 
     public static event Action exposeWeakness; 
+    public static event Action wrongAnswer;
+    public static event Action rightAnswer;
+    public static event Action bossDead;
    
     // Start is called before the first frame update
     void Start()
@@ -86,6 +89,9 @@ public class BossMechanic : MonoBehaviour
         }
         else if (float.Parse(givenAnswer.text) == answer) 
         {
+            if(Tutorial) {
+                rightAnswer?.Invoke();
+            }
             givenAnswer.text = "";
             exposeWeakness?.Invoke();
             Debug.Log("correct");
@@ -94,10 +100,13 @@ public class BossMechanic : MonoBehaviour
         }
         else if (float.Parse(givenAnswer.text) != answer) 
         {
-            
+            if(Tutorial) {
+                wrongAnswer?.Invoke();
+            }
             StartCoroutine(releaseFireBallWave());
             Debug.Log($"{givenAnswer.text} != {answer}");
             givenAnswer.text = "";
+
         }
     }
 
@@ -144,7 +153,10 @@ public class BossMechanic : MonoBehaviour
         for(int i = 0; i < answerNums.Length; i++) {
             answerNums[i].SetActive(false);
         }
-        
+        if(Tutorial) {
+            bossDead?.Invoke();
+        }
+        SceneManager.LoadScene(7);
 
         
     }
@@ -152,11 +164,14 @@ public class BossMechanic : MonoBehaviour
     public void OnTriggerEnter2D(Collider2D other) {
         if (other.CompareTag("PlayerProj") && !invulnerbility) {
             health -= 1;
-            healthDisplay.text = $"{health}/{maxHealth}";
+            healthsquare.fillAmount = health/maxHealth;
             Debug.Log("took 1 damage");
             if (health == 0) {
                 animator.SetTrigger("death");
                 Destroy(gameObject, 28f/60f);
+                if(Tutorial) {
+                    bossDead?.Invoke();
+                }
             } else{
                 StartCoroutine(Invulnerbility());
             }

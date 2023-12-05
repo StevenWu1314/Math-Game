@@ -27,7 +27,7 @@ public class enemy_Spawner : MonoBehaviour
             int rand = Random.Range(0, enemyPrefabs.Length);
             GameObject enemyToSpawn = enemyPrefabs[rand];
 
-            Instantiate(enemyToSpawn, transform.position + new Vector3(0, UnityEngine.Random.Range(-5, 5), 0), Quaternion.identity);
+            Instantiate(enemyToSpawn, transform.position + new Vector3(0, UnityEngine.Random.Range(-4.5f, 4.5f), 0), Quaternion.identity);
            
         }
     }

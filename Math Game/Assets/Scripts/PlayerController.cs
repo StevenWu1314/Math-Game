@@ -16,6 +16,7 @@ public class PlayerController : MonoBehaviour
 	public static event Action inPosition;
 	[SerializeField]
 	private GameObject player_Bullet;
+	public GameObject[] hearts;
 	
 	[SerializeField]
 	private Transform attack_Point;
@@ -125,13 +126,14 @@ public class PlayerController : MonoBehaviour
 				yield return new WaitForSeconds(0.01f);
 			}
 		}
-		//SceneManager.LoadScene();
+		SceneManager.LoadScene(8);
 		yield return null;
 	}
 	void OnTriggerEnter2D(Collider2D other){
 		if (!other.CompareTag("PlayerProj") && !invulnerbility) {
 			Debug.Log("You've been hit");
 			health -= 1;
+			hearts[(int)health].SetActive(false);
 			Destroy(other.gameObject);
 			if(health <= 0) {
 				StartCoroutine(DeathAnimation());
