@@ -5,6 +5,7 @@ using UnityEngine;
 public class enemy_Spawner : MonoBehaviour
 {
     [SerializeField] private float spawnrate;
+    
     [SerializeField] private GameObject[] enemyPrefabs;
     [SerializeField] private bool canSpawn = true;
 

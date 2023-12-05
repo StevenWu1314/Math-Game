@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Runtime.InteropServices;
 using System.Threading;
 using Unity.Collections;
@@ -12,6 +13,9 @@ public class GameManager : MonoBehaviour
     public GameObject boss;
     public static event Action bossEntrance;
     public float timeTillBoss = 60f;
+    public bool bossSummoned;
+    public AudioSource music;
+    public AudioClip bossMusic;
     // Start is called before the first frame update
     void Start()
     {
@@ -22,7 +26,7 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         timeTillBoss -= Time.deltaTime;
-        if (timeTillBoss <= 0) {
+        if (timeTillBoss <= 0 && !bossSummoned) {
             changeState(States.bossTime);
             
         }
@@ -34,9 +38,12 @@ public class GameManager : MonoBehaviour
                 spawners.SetActive(true);
                 break;
             case States.bossTime:
+                bossSummoned = true;
                 boss.SetActive(true);
                 spawners.SetActive(false);
                 bossEntrance?.Invoke();
+                music.clip = bossMusic;
+                music.Play();
                 break;
         }
     }

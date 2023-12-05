@@ -16,7 +16,7 @@ public class Bossprojectilebehavior : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.position += transform.up * Time.deltaTime * speed;
+        transform.position += transform.right * -1f * Time.deltaTime * speed;
         lifespan -= Time.deltaTime;
         if (lifespan <= 0) {
             Destroy(gameObject);

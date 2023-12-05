@@ -44,9 +44,14 @@ public class BossMechanic : MonoBehaviour
     void createProblem() {
         num1 = (int)UnityEngine.Random.Range(1, 10);
         num2 = (int)UnityEngine.Random.Range(1, 10);
-        sign = (int)UnityEngine.Random.Range(1, 3);
+        sign = (int)UnityEngine.Random.Range(1, 5);
         if (sign == 2){
             while (num2 > num1){
+                num2 = (int)UnityEngine.Random.Range(1, 10);
+            }
+        }
+        if (sign == 4) {
+            while(num1 % num2 != 0) {
                 num2 = (int)UnityEngine.Random.Range(1, 10);
             }
         }
@@ -61,6 +66,14 @@ public class BossMechanic : MonoBehaviour
                 ProblemDisplay.text = $"{num1} - {num2} = ";
                 answer = num1 - num2;
                 break;
+            case 3:
+                ProblemDisplay.text = $"{num1} * {num2} = ";
+                answer = num1 * num2;
+                break;
+            case 4:
+                ProblemDisplay.text = $"{num1} / {num2} = ";
+                answer = num1 / num2;
+                break;
         }
         answerRecieved = false;
         
@@ -73,8 +86,6 @@ public class BossMechanic : MonoBehaviour
         }
         else if (float.Parse(givenAnswer.text) == answer) 
         {
-            health -= 1;
-            
             givenAnswer.text = "";
             exposeWeakness?.Invoke();
             Debug.Log("correct");
@@ -94,7 +105,7 @@ public class BossMechanic : MonoBehaviour
     {
         while (!answerRecieved) {
             GameObject fireball = Instantiate(bossProj, transform.position + new Vector3(0, UnityEngine.Random.Range(-5, 5), 0), quaternion.identity);
-            fireball.transform.Rotate(new Vector3(0, 0, 90), Space.World);
+            
             yield return new WaitForSeconds(2f);
         }
         yield return new WaitForSeconds(1f);
@@ -104,7 +115,7 @@ public class BossMechanic : MonoBehaviour
         for(int i = 0; i < 3; i++) {
             for(int z = 0; z < 10; z++) {
                 GameObject fireball = Instantiate(bossProj, transform.position, quaternion.identity);
-                fireball.transform.Rotate(new Vector3(0, 0, UnityEngine.Random.Range(0, 180)), Space.World);
+                fireball.transform.Rotate(new Vector3(0, 0, UnityEngine.Random.Range(-90, 90)), Space.World);
             }
             yield return new WaitForSeconds(2f);
         }
@@ -114,7 +125,9 @@ public class BossMechanic : MonoBehaviour
         StartCoroutine(WeaknessExposed());
     }
     IEnumerator WeaknessExposed() {
+        givenAnswer.text = "";
         yield return new WaitForSeconds(1.8f);
+        givenAnswer.text = "";
         for(int i = 0; i < answerNums.Length; i++) {
             answerNums[i].SetActive(false);
         }
@@ -140,18 +153,23 @@ public class BossMechanic : MonoBehaviour
         if (other.CompareTag("PlayerProj") && !invulnerbility) {
             health -= 1;
             healthDisplay.text = $"{health}/{maxHealth}";
+            Debug.Log("took 1 damage");
             if (health == 0) {
                 animator.SetTrigger("death");
                 Destroy(gameObject, 28f/60f);
+            } else{
+                StartCoroutine(Invulnerbility());
             }
-            StartCoroutine(Invulnerbility());
+            
         }
     }
 
     IEnumerator Invulnerbility(){
         invulnerbility = true;
+		animator.SetTrigger("take damage");
         yield return new WaitForSeconds(3f);
         invulnerbility = false;
+		animator.SetTrigger("take damage");
         yield return null;
     }
 
