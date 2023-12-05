@@ -21,6 +21,7 @@ public class PlayerController : MonoBehaviour
 	[SerializeField]
 	private Transform attack_Point;
 	private bool invulnerbility = false;
+	public GameObject loseUI;
 
 	private bool dead = false;
 	
@@ -138,6 +139,8 @@ public class PlayerController : MonoBehaviour
 			if(health <= 0) {
 				StartCoroutine(DeathAnimation());
 				Destroy(gameObject, 1f);
+				loseUI.SetActive(true);
+
 			} else
 			{
 				StartCoroutine(Invulnerbility());
