@@ -146,5 +146,8 @@ public class PlayerController : MonoBehaviour
 		}
 		
 	}
+	void OnDestroy(){
+		SceneManager.LoadScene(8);
+	}
 			
 }
